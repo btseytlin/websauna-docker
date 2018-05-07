@@ -1,0 +1,30 @@
+version: "2"
+services:
+  app:
+    build: application/.
+    container_name: app
+    command: pserve ws://application/application/conf/development.ini
+    entrypoint: /usr/src/application/docker_entrypoint.sh
+    ports:
+      - 80:6543
+    links:
+      - db
+      - redis
+    depends_on:
+      - db
+      - redis
+    env_file:
+      - .env
+    volumes:
+      - "./application/:/usr/src/application"
+      - "./application/docker_entrypoint.sh:/usr/src/application/docker_entrypoint.sh"
+  db:
+    image: postgres:alpine
+    container_name: db
+    env_file:
+      - .env
+  redis:
+    image: redis:alpine
+    container_name: redis
+    env_file:
+      - .env
